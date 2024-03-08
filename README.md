@@ -38,6 +38,11 @@ If everything works, then this hardware interface is ready to be used in your pr
 
 
 
+<<<<<<< HEAD
 ### Thanks to:
     - Christoph Fröhlich for great ROS@_control examples and video tutorials!
+=======
+#### Thanks to:
+   - Christoph Fröhlich for great ROS2_control examples and video tutorials!
+>>>>>>> 948deaa (feat: updated README.md)
 
