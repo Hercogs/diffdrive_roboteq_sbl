@@ -75,16 +75,19 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[robot_description, robot_controllers],
         output="both",
+        remappings=[
+            ("/diffbot_base_controller/cmd_vel_unstamped", "/cmd_vel"),
+            ("/diffbot_base_controller/odom", "/odom"),
+        ],
     )
+
     robot_state_pub_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
         parameters=[robot_description],
-        # remappings=[
-        #     ("/diffbot_base_controller/cmd_vel_unstamped", "/cmd_vel"),
-        # ],
     )
+
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -104,6 +107,9 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["diffbot_base_controller", "--controller-manager", "/controller_manager"],
+        # remappings=[
+        #     ("/diffbot_base_controller/cmd_vel_unstamped", "/cmd_vel"),
+        # ],
     )
 
     # Delay rviz start after `joint_state_broadcaster`

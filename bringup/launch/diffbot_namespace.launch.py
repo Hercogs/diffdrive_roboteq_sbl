@@ -67,7 +67,7 @@ def generate_launch_description():
         ]
     )
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("diffdrive_roboteq_sbl"), "rviz", "diffbot.rviz"]
+        [FindPackageShare("diffdrive_roboteq_sbl"), "rviz", "diffbot_namespace.rviz"]
     )
 
     control_node = Node(
@@ -76,17 +76,22 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[robot_description, robot_controllers],
         output="both",
+        remappings=[
+            ("diffbot_base_controller/cmd_vel_unstamped", "cmd_vel"),
+            ("diffbot_base_controller/odom", "odom"),
+        ],
     )
+
     robot_state_pub_node = Node(
         namespace="robot1",
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[robot_description],
-        # remappings=[
-        #     ("/diffbot_base_controller/cmd_vel_unstamped", "/cmd_vel"),
-        # ],
+        parameters=[robot_description,
+                    {"frame_prefix": "robot1/"}
+                    ],
     )
+
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
