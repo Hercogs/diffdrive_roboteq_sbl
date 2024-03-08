@@ -1,6 +1,18 @@
 # diffdrive_roboteq_sbl
 
-   *DiffBot*, or ''Differential Mobile Robot'', is a simple mobile base with differential drive.
-   The robot is basically a box moving according to differential drive kinematics.
+<hr>
 
-Find the documentation in [doc/userdoc.rst](doc/userdoc.rst) or on [control.ros.org](https://control.ros.org/master/doc/ros2_control_demos/example_2/doc/userdoc.html).
+## Description
+This package contains working hardware interface for Roboteq SBL BLDC controller family. ALthough it might work for other Roboteq controller as well. It has velocity command interface and velocity and position state interfaces. It handles interrupted communication - in case controller gets disconnected, it automatically reconnects.
+
+
+TODO
+
+## Installation
+
+TODO
+
+## Usage
+
+TODO
+
