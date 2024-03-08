@@ -5,6 +5,8 @@
 ## Description
 This package contains working hardware interface for Roboteq SBL BLDC controller family. ALthough it might work for other Roboteq controller as well. It has velocity command interface and velocity and position state interfaces. It handles interrupted communication - in case controller gets disconnected, it automatically reconnects.
 
+Structure of this package is based on demoes found here: <a href="https://github.com/ros-controls/ros2_control_demos" target="_blank">ros2_control_demos</a>. Read documentation to understand this package structure.
+
 ## Installation
 
 Download source and install dependencies:
@@ -38,11 +40,5 @@ If everything works, then this hardware interface is ready to be used in your pr
 
 
 
-<<<<<<< HEAD
-### Thanks to:
-    - Christoph Fröhlich for great ROS@_control examples and video tutorials!
-=======
 #### Thanks to:
    - Christoph Fröhlich for great ROS2_control examples and video tutorials!
->>>>>>> 948deaa (feat: updated README.md)
-
