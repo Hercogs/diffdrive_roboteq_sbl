@@ -258,7 +258,8 @@ hardware_interface::return_type DiffDriveRoboteqHardwareSbl::read(
   wheel_r_.pos = wheel_r_.calc_enc_angle();
   wheel_r_.vel = (wheel_r_.pos - pos_prev) / delta_seconds;
 
-  //RCLCPP_INFO(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "Read: %.2f", wheel_l_.pos);
+  // RCLCPP_INFO(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"),
+  //    "Read: %.2f, period: %.2f", wheel_l_.vel, delta_seconds);
 
   return hardware_interface::return_type::OK;
 }
@@ -283,17 +284,16 @@ hardware_interface::return_type diffdrive_roboteq_sbl ::DiffDriveRoboteqHardware
     return hardware_interface::return_type::OK;
   }
 
-  int max_vel = 1800; // From controller
 
-  // Convert to rpm and multiply with reducer ratio
+  // Convert from rad/s to rpm and multiply with reducer ratio
   float rpm_left = wheel_l_.cmd * 60 / (2 * 3.14) * cfg_.reducer_ratio;
   float rpm_right = wheel_r_.cmd * 60 / (2 * 3.14) * cfg_.reducer_ratio;
 
   // Convert to controller scale
-  // max_vel -> 1000
+  int max_vel {1000}; // Maximum value to send to controller
 
-  int rpm_left_scaled = (rpm_left / max_vel) * 1000;
-  int rpm_right_scaled = (rpm_right / max_vel) * 1000;
+  int rpm_left_scaled = (rpm_left / wheel_l_.max_rpm) * max_vel;
+  int rpm_right_scaled = (rpm_right / wheel_r_.max_rpm) * max_vel;
 
   int status;
 

@@ -384,7 +384,7 @@ int RoboteqDevice::Connect(string port)
 	}
 
 	//cout << "succeeded." << endl;
-	fcntl(handle, F_SETFL, O_APPEND | O_NONBLOCK & ~FNDELAY);
+	fcntl(handle, F_SETFL, O_APPEND | (O_NONBLOCK & ~FNDELAY));
 
 	cout << "Initializing port...";
 	InitPort();
@@ -489,7 +489,7 @@ int RoboteqDevice::ReadAll(string &str)
 	char buf[BUFFER_SIZE + 1] = "";
 
 	str = "";
-	int i = 0;
+	// int i = 0;
 	while ((countRcv = read(handle, buf, BUFFER_SIZE)) > 0)
 	{
 		str.append(buf, countRcv);
