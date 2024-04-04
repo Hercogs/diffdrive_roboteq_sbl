@@ -1,1 +1,0 @@
-SUBSYSTEMS=="tty", KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", GROUP="dialout", SYMLINK+="roboteq_sbl", MODE:="0666"
