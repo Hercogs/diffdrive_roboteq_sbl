@@ -15,6 +15,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(nav_msgs REQUIRED)
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
@@ -67,6 +68,16 @@ install(TARGETS diffdrive_roboteq_sbl
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+)
+
+add_executable(odom_filter src/odom_filter.cpp)
+ament_target_dependencies(odom_filter
+  rclcpp
+  nav_msgs
+)
+install(TARGETS 
+  odom_filter
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

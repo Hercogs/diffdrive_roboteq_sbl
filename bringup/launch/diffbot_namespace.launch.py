@@ -77,9 +77,18 @@ def generate_launch_description():
         parameters=[robot_description, robot_controllers],
         output="both",
         remappings=[
-            ("diffbot_base_controller/cmd_vel_unstamped", "cmd_vel"),
-            ("diffbot_base_controller/odom", "odom"),
+            # Only because of bug in diffdrive controller - cmd_vel_raw
+            ("diffbot_base_controller/cmd_vel_unstamped", "cmd_vel"), 
+            ("diffbot_base_controller/odom", "odom_raw"),
         ],
+    )
+
+    # Only because of bug in diffdrive controller
+    odom_filter_node = Node(
+        namespace="robot1",
+        package="diffdrive_roboteq_sbl",
+        executable="odom_filter",
+        output="both",
     )
 
     robot_state_pub_node = Node(
@@ -133,6 +142,7 @@ def generate_launch_description():
 
     nodes = [
         control_node,
+        odom_filter_node,
         robot_state_pub_node,
         joint_state_broadcaster_spawner,
         delay_rviz_after_joint_state_broadcaster_spawner,
