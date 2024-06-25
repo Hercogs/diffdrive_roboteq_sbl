@@ -1,5 +1,9 @@
 #!/bin/bash
 
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+
+cd "$parent_path"
+
 echo "remap the device serial port(ttyACM*) to  roboteq_sbl"
 echo "roboteq_sbl usb connection as /dev/roboteq_sbl , check it using the command : ls -l /dev|grep ttyUSB"
 echo "start copy roboteq_sbl.rules to  /etc/udev/rules.d/"
