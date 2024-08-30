@@ -23,7 +23,7 @@
 #include <vector>
 
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "rclcpp/rclcpp.hpp"
+// #include "rclcpp/rclcpp.hpp"
 
 namespace diffdrive_roboteq_sbl
 {
@@ -101,7 +101,14 @@ hardware_interface::CallbackReturn DiffDriveRoboteqHardwareSbl::on_init(
     }
   }
 
-  // TODO clean odometry data from controller, get max speed
+  // Define publisher
+  this->node_ = rclcpp::Node::make_shared("harware_interface_node");
+  rclcpp::QoS qos_profile(3);
+  qos_profile.durability(RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL);
+  this->controller_status_pub_ = this->node_->create_publisher<std_msgs::msg::Bool>(
+    "bldc_controller_ok", qos_profile);
+
+  // TODO clean odometry data from controller
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -181,6 +188,9 @@ hardware_interface::CallbackReturn DiffDriveRoboteqHardwareSbl::on_activate(
     RCLCPP_INFO(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "Could not connect to controller," \
               " got status code: %d", status);
     device_.Disconnect();
+
+    this->msg_.data = false;
+    this->controller_status_pub_->publish(this->msg_);
               
     //return hardware_interface::CallbackReturn::ERROR;
   } else 
@@ -216,6 +226,8 @@ hardware_interface::return_type DiffDriveRoboteqHardwareSbl::read(
     }else
     {
       RCLCPP_INFO(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "Connected back to controller!");
+      this->msg_.data = true;
+      this->controller_status_pub_->publish(this->msg_);
     }
     return hardware_interface::return_type::OK;
   }
@@ -232,7 +244,9 @@ hardware_interface::return_type DiffDriveRoboteqHardwareSbl::read(
     if (status == RQ_ERR_TRANSMIT_FAILED)
     {
       device_.Disconnect();
-            RCLCPP_ERROR(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "BLDC disconecting - technical reason???");
+      RCLCPP_ERROR(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "BLDC disconecting - technical reason???");
+      this->msg_.data = false;
+      this->controller_status_pub_->publish(this->msg_);
       return hardware_interface::return_type::OK;
     }
   }
@@ -242,7 +256,9 @@ hardware_interface::return_type DiffDriveRoboteqHardwareSbl::read(
     if (status == RQ_ERR_TRANSMIT_FAILED)
     {
       device_.Disconnect();
-            RCLCPP_ERROR(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "BLDC disconecting - technical reason???");
+      RCLCPP_ERROR(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "BLDC disconecting - technical reason???");
+      this->msg_.data = false;
+      this->controller_status_pub_->publish(this->msg_);
       return hardware_interface::return_type::OK;
     }
   }
@@ -302,16 +318,15 @@ hardware_interface::return_type diffdrive_roboteq_sbl ::DiffDriveRoboteqHardware
     if (status == RQ_ERR_TRANSMIT_FAILED)
     {
       device_.Disconnect();
-            RCLCPP_ERROR(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "BLDC disconecting - technical reason???");
+      RCLCPP_ERROR(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "BLDC disconecting - technical reason???");
+      this->msg_.data = false;
+      this->controller_status_pub_->publish(this->msg_);
       return hardware_interface::return_type::OK;
-      //cout << "Manual disconecting" << status << endl;
-      //RCLCPP_ERROR(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "BLDC disconecting - technical reason???");
-      //return hardware_interface::return_type::ERROR;
     }
   }
   else
   {
-
+      // good
   }
 
   if ((status = device_.SetCommand(_G, 2, rpm_right_scaled)) != RQ_SUCCESS)
@@ -319,7 +334,9 @@ hardware_interface::return_type diffdrive_roboteq_sbl ::DiffDriveRoboteqHardware
     if (status == RQ_ERR_TRANSMIT_FAILED)
     {
       device_.Disconnect();
-            RCLCPP_ERROR(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "BLDC disconecting - technical reason???");
+      RCLCPP_ERROR(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "BLDC disconecting - technical reason???");
+      this->msg_.data = false;
+      this->controller_status_pub_->publish(this->msg_);
       return hardware_interface::return_type::OK;
     }
   }
@@ -342,6 +359,8 @@ void DiffDriveRoboteqHardwareSbl::init_settings()
   if ((status = device_.GetConfig(_MXRPM, 1, result)) != RQ_SUCCESS)
   {
 		RCLCPP_INFO(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "- GetConfig(_MXRPM, 1) failed");
+    this->msg_.data = false;
+    this->controller_status_pub_->publish(this->msg_);
     return;
   } else
   {
@@ -354,6 +373,8 @@ void DiffDriveRoboteqHardwareSbl::init_settings()
   if ((status = device_.GetConfig(_MXRPM, 2, result)) != RQ_SUCCESS)
   {
 		RCLCPP_INFO(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "- GetConfig(_MXRPM, 2) failed");
+    this->msg_.data = false;
+    this->controller_status_pub_->publish(this->msg_);
     return;
   } else
   {
@@ -366,6 +387,8 @@ void DiffDriveRoboteqHardwareSbl::init_settings()
   if ((status = device_.SetCommand(_CB, 1, 0)) != RQ_SUCCESS)
   {
 		RCLCPP_INFO(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "- SetCommand(_CB, 1, 0) failed");
+    this->msg_.data = false;
+    this->controller_status_pub_->publish(this->msg_);
     return;
   } else
   {
@@ -377,6 +400,8 @@ void DiffDriveRoboteqHardwareSbl::init_settings()
   if ((status = device_.SetCommand(_CB, 2, 0)) != RQ_SUCCESS)
   {
 		RCLCPP_INFO(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "- SetCommand(_CB, 2, 0) failed");
+    this->msg_.data = false;
+    this->controller_status_pub_->publish(this->msg_);
     return;
   } else
   {
@@ -385,6 +410,9 @@ void DiffDriveRoboteqHardwareSbl::init_settings()
 
   cfg_.initialized = true;
   RCLCPP_INFO(rclcpp::get_logger("DiffDriveRoboteqHardwareSbl"), "HW interfaces configured!");
+
+  this->msg_.data = true;
+  this->controller_status_pub_->publish(this->msg_);
 
 }
 

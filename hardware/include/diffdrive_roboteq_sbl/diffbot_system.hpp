@@ -29,6 +29,8 @@
 #include "rclcpp/time.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/bool.hpp"
 
 #include "diffdrive_roboteq_sbl/visibility_control.h"
  
@@ -107,6 +109,10 @@ private:
   Wheel wheel_l_;
   Wheel wheel_r_;
 
+  // Publisher for controller status
+  rclcpp::Node::SharedPtr node_;
+  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr controller_status_pub_;
+  std_msgs::msg::Bool msg_;
 
 };
 
