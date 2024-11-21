@@ -1,5 +1,10 @@
 # diffdrive_roboteq_sbl
 
+Tested on:
+  - Ubuntu 22.04
+  - ROS2 Humble
+  - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+  
 <hr>
 
 ## Description
@@ -23,11 +28,18 @@ colcon build
 source install/setup.bash
 ```
 
+Setup Udev rules:
+```
+sudo bash udev/create_udev_rules.sh
+```
+Rules can be deleted by executing ```delete_udev_rules.sh``` script the same way.
+
+
 ## Usage
 
 **Important:** Before running any code, calibrate your motors and controller using Roboteq <a href="https://readme.com/" target="_blank">`Roborun+ PC Utility`</a>. If you cannot spin motors from `Roborun+ PC Utility`, then try to find problem before continue with ROS2 hardware interface.
 
-Before testing this package, you **must check controller port name and chnage** to correct one in file: `./diffdrive_roboteq_sbl/description/ros2_control/diffbot.ros2_control.xacro`. Parameter name to change: `device_name`.
+Before testing this package, you **must check controller port name and change** (in case Udev rule did not worked) to correct one in file: `./diffdrive_roboteq_sbl/description/ros2_control/diffbot.ros2_control.xacro`. Edit parameter named `device_name` to change it.
 Check other paramaters as well, otherwise odometry and velocity command will be wrong. 
 
 To try out this package, execute:
